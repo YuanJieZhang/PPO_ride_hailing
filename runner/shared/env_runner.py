@@ -1,3 +1,10 @@
+"""
+# @Time    : 2021/7/1 7:15 下午
+# @Author  : hezhiqiang01
+# @Email   : hezhiqiang01@baidu.com
+# @File    : env_runner.py
+"""
+
 import time
 import numpy as np
 import torch
@@ -39,7 +46,7 @@ class EnvRunner(Runner):
 
                 # Obser reward and next obs
                 obs, rewards, dones, infos = self.envs.step(actions_env)
-
+                print(obs, rewards, dones, infos)
                 data = (
                     obs,
                     rewards,

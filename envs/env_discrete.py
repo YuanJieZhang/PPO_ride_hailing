@@ -1,24 +1,32 @@
 """
-# @Time    : 2024/4/20 10:07 下午
-# @Author  : zhangjie
-# @Email   : 970528347@qq.com
-# @File    : train.py
+# @Time    : 2021/7/2 5:22 下午
+# @Author  : hezhiqiang
+# @Email   : tinyzqh@163.com
+# @File    : env_discrete.py
 """
 
 import gym
 from gym import spaces
 import numpy as np
 from envs.env_core import EnvCore
-
-
+from envs.new_env import TopEnvironment
 class DiscreteActionEnv(object):
     """
     对于离散动作环境的封装
     Wrapper for discrete action environment.
     """
+    '''
+             observation = ResourceObservation(use_weekdays=False)
 
-    def __init__(self):
-        self.env = EnvCore()
+            self.env = TopEnvironment1(np.power(0.5, 1. / 3600), 1, 50, observation, 0, 1,
+                             5000)
+            self.num_agent = 1
+
+            self.signal_obs_dim = 4
+            self.signal_action_dim = 101
+            '''
+    def __init__(self,agent_num):
+        self.env = TopEnvironment(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
         self.num_agent = self.env.agent_num
 
         self.signal_obs_dim = self.env.obs_dim
@@ -77,6 +85,7 @@ class DiscreteActionEnv(object):
             for _ in range(self.num_agent)
         ]
 
+
     def step(self, actions):
         """
         输入actions维度假设：
@@ -86,9 +95,10 @@ class DiscreteActionEnv(object):
         # actions shape = (5, 2, 5)
         # 5 threads of the environment, with 2 intelligent agents inside, and each intelligent agent's action is a 5-dimensional one_hot encoding
         """
-
+        print(actions)
         results = self.env.step(actions)
         obs, rews, dones, infos = results
+        print(obs, rews, dones, infos)
         return np.stack(obs), np.stack(rews), np.stack(dones), infos
 
     def reset(self):

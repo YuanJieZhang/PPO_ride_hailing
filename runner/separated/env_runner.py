@@ -151,7 +151,10 @@ class EnvRunner(Runner):
             elif self.envs.action_space[agent_id].__class__.__name__ == "Discrete":
                 action_env = np.squeeze(np.eye(self.envs.action_space[agent_id].n)[action], 1)
             else:
-                raise NotImplementedError
+                # TODO 这里改造成自己环境需要的形式即可
+                # TODO Here, you can change the action_env to the form you need
+                action_env = action
+                # raise NotImplementedError
 
             actions.append(action)
             temp_actions_env.append(action_env)
