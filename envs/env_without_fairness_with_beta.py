@@ -18,11 +18,12 @@ from tqdm import tqdm
 from matplotlib import animation
 from data.utils import create_graph
 from data.utils import import_requests_from_csv
+from data.utils import import_requests_from_csv_poission
 from data.utils import Driver
 from data.utils import choose_random_node
 
 
-class TopEnvironment:
+class TopEnvironmentW:
     FREE = 0
     OCCUPIED = 1
 
@@ -48,7 +49,7 @@ class TopEnvironment:
         self.done = False
         self.graph = create_graph()
         self.order_count = 0
-        self.all_requests = import_requests_from_csv()
+        self.all_requests,self.random10_list = import_requests_from_csv_poission(1,2,5000)
         self.init_pos=random.sample(self.random10_list,self.agent_num)
         self.max_count = 500
         self.requests = []
@@ -56,6 +57,7 @@ class TopEnvironment:
         self.fairness = []
         self.utility = [[]]
         self.epoch = 0
+        self.beta = 1400000
 
     def _generate_observation(self):
         state = np.zeros((self.agent_num, self.obs_dim))
@@ -116,15 +118,9 @@ class TopEnvironment:
 
         vec = np.array(reward_list).reshape((1,self.agent_num))
         self.utility=np.hstack((self.utility,vec.T))
-        std_dev = statistics.stdev(reward_list)
-        after_reward_list = [x - (std_dev/self.agent_num) for x in reward_list]
-        vec1 = np.array(after_reward_list).reshape((1, self.agent_num))
-        self.reward = np.hstack((self.reward, vec1.T))
-
-        self.fairness.append(std_dev)
 
 
-        return self._state(), after_reward_list, end_list, {}
+        return self._state(), reward_list, end_list, {}
 
     def single_step(self, action):
         # action把他变成司机->request的形式传入step
@@ -141,21 +137,29 @@ class TopEnvironment:
                     if (r.state == 0) & r.timestamp<=self.time &r.origin != r.destination:
                         select_actions.append(r)
             if len(select_actions) != 0:
-                random_action = random.choice(select_actions)
-                random_action.state = 1
-                reward = (self.graph.get_edge_data(random_action.origin, random_action.destination)["distance"] -
+                for aim_action in select_actions:
+                    #random_action = random.choice(select_actions)
+                    aim_action.state = 1
+                    reward = (self.graph.get_edge_data(aim_action.origin, aim_action.destination)["distance"] -
                           self.graph.get_edge_data(self.drivers[action[1]].pos,
-                                                   random_action.origin)["distance"])
-                self.drivers[action[1]].on_road = 1
-                self.drivers[action[1]].Request = random_action
-                self.drivers[action[1]].money+=reward
+                                                   aim_action.origin)["distance"])
+                    self.drivers[action[1]].money += reward
+                    if self._filter_beta() > self.beta:
+                        self.drivers[action[1]].money -= reward
+                        continue
+                    self.drivers[action[1]].on_road = 1
+                    self.drivers[action[1]].Request = aim_action
+
         if self.order_count >= self.max_count:
             for r in self.requests:
-                r.state=0
-            self.epoch+=1
+                r.state = 0
+            self.epoch += 1
             print("epoch:", self.epoch)
-            print("utility:",np.sum(self.utility))
-            print("reward:",np.sum(self.reward))
+            if self.epoch <= 350:
+                print(self.beta,self._filter_beta())
+                self.beta -= 500
+            print("utility:", np.sum(self.utility))
+            print("fairness:", self._filter_beta())
             self.reset()
 
 
@@ -163,6 +167,12 @@ class TopEnvironment:
 
     def _state(self):
         return self._generate_observation()
+
+    def _filter_beta(self):
+        reward_list = []
+        for driver in self.drivers:
+            reward_list.append(driver.money)
+        return statistics.stdev(reward_list)
 
     # def test(self):
     #     ("Testing environment with {} agents".format(self.agent_num))

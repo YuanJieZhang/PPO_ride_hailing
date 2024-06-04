@@ -66,7 +66,7 @@ class ValueNorm(nn.Module):
         return out
 
     def denormalize(self, input_vector):
-        """ Transform normalized data back into original distribution """
+        """ Transform normalized data.txt back into original distribution """
         if type(input_vector) == np.ndarray:
             input_vector = torch.from_numpy(input_vector)
         input_vector = input_vector.to(**self.tpdv)

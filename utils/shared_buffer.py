@@ -13,7 +13,7 @@ def _cast(x):
 
 class SharedReplayBuffer(object):
     """
-    Buffer to store training data.
+    Buffer to store training data.txt.
     :param args: (argparse.Namespace) arguments containing relevant model, policy, and env information.
     :param num_agents: (int) number of agents in the env.
     :param obs_space: (gym.Space) observation space of agents.
@@ -79,7 +79,7 @@ class SharedReplayBuffer(object):
     def insert(self, share_obs, obs, rnn_states_actor, rnn_states_critic, actions, action_log_probs,
                value_preds, rewards, masks, bad_masks=None, active_masks=None, available_actions=None):
         """
-        Insert data into the buffer.
+        Insert data.txt into the buffer.
         :param share_obs: (argparse.Namespace) arguments containing relevant model, policy, and env information.
         :param obs: (np.ndarray) local agent observations.
         :param rnn_states_actor: (np.ndarray) RNN states for actor network.
@@ -114,7 +114,7 @@ class SharedReplayBuffer(object):
     def chooseinsert(self, share_obs, obs, rnn_states, rnn_states_critic, actions, action_log_probs,
                      value_preds, rewards, masks, bad_masks=None, active_masks=None, available_actions=None):
         """
-        Insert data into the buffer. This insert function is used specifically for Hanabi, which is turn based.
+        Insert data.txt into the buffer. This insert function is used specifically for Hanabi, which is turn based.
         :param share_obs: (argparse.Namespace) arguments containing relevant model, policy, and env information.
         :param obs: (np.ndarray) local agent observations.
         :param rnn_states_actor: (np.ndarray) RNN states for actor network.
@@ -147,7 +147,7 @@ class SharedReplayBuffer(object):
         self.step = (self.step + 1) % self.episode_length
 
     def after_update(self):
-        """Copy last timestep data to first index. Called after update to model."""
+        """Copy last timestep data.txt to first index. Called after update to model."""
         self.share_obs[0] = self.share_obs[-1].copy()
         self.obs[0] = self.obs[-1].copy()
         self.rnn_states[0] = self.rnn_states[-1].copy()
@@ -159,7 +159,7 @@ class SharedReplayBuffer(object):
             self.available_actions[0] = self.available_actions[-1].copy()
 
     def chooseafter_update(self):
-        """Copy last timestep data to first index. This method is used for Hanabi."""
+        """Copy last timestep data.txt to first index. This method is used for Hanabi."""
         self.rnn_states[0] = self.rnn_states[-1].copy()
         self.rnn_states_critic[0] = self.rnn_states_critic[-1].copy()
         self.masks[0] = self.masks[-1].copy()
@@ -225,7 +225,7 @@ class SharedReplayBuffer(object):
 
     def feed_forward_generator(self, advantages, num_mini_batch=None, mini_batch_size=None):
         """
-        Yield training data for MLP policies.
+        Yield training data.txt for MLP policies.
         :param advantages: (np.ndarray) advantage estimates.
         :param num_mini_batch: (int) number of minibatches to split the batch into.
         :param mini_batch_size: (int) number of samples in each minibatch.
@@ -287,7 +287,7 @@ class SharedReplayBuffer(object):
 
     def naive_recurrent_generator(self, advantages, num_mini_batch):
         """
-        Yield training data for non-chunked RNN training.
+        Yield training data.txt for non-chunked RNN training.
         :param advantages: (np.ndarray) advantage estimates.
         :param num_mini_batch: (int) number of minibatches to split the batch into.
         """
@@ -384,7 +384,7 @@ class SharedReplayBuffer(object):
 
     def recurrent_generator(self, advantages, num_mini_batch, data_chunk_length):
         """
-        Yield training data for chunked RNN training.
+        Yield training data.txt for chunked RNN training.
         :param advantages: (np.ndarray) advantage estimates.
         :param num_mini_batch: (int) number of minibatches to split the batch into.
         :param data_chunk_length: (int) length of sequence chunks with which to train RNN.

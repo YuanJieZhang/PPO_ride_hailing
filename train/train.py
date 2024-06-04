@@ -1,3 +1,10 @@
+"""
+# @Time    : 2021/6/30 10:07 下午
+# @Author  : hezhiqiang
+# @Email   : tinyzqh@163.com
+# @File    : train.py
+"""
+
 # !/usr/bin/env python
 import sys
 import os
@@ -55,7 +62,7 @@ def make_eval_env(all_args):
 def parse_args(args, parser):
     parser.add_argument("--scenario_name", type=str, default="MyEnv", help="Which scenario to run on")
     parser.add_argument("--num_landmarks", type=int, default=3)
-    parser.add_argument("--num_agents", type=int, default=5, help="number of players")
+    parser.add_argument("--num_agents", type=int, default=100, help="number of players")
 
     all_args = parser.parse_known_args(args)[0]
 
@@ -70,14 +77,14 @@ def main(args):
         assert all_args.use_recurrent_policy or all_args.use_naive_recurrent_policy, "check recurrent policy!"
     elif all_args.algorithm_name == "mappo":
         assert (
-            all_args.use_recurrent_policy == False and all_args.use_naive_recurrent_policy == False
+                all_args.use_recurrent_policy == False and all_args.use_naive_recurrent_policy == False
         ), "check recurrent policy!"
     else:
         raise NotImplementedError
 
     assert (
-        all_args.share_policy == True and all_args.scenario_name == "simple_speaker_listener"
-    ) == False, "The simple_speaker_listener scenario can not use shared policy. Please check the config.py."
+                   all_args.share_policy == True and all_args.scenario_name == "simple_speaker_listener"
+           ) == False, "The simple_speaker_listener scenario can not use shared policy. Please check the config.py."
 
     # cuda
     if all_args.cuda and torch.cuda.is_available():
@@ -94,11 +101,11 @@ def main(args):
 
     # run dir
     run_dir = (
-        Path(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0] + "/results")
-        / all_args.env_name
-        / all_args.scenario_name
-        / all_args.algorithm_name
-        / all_args.experiment_name
+            Path(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0] + "/results")
+            / all_args.env_name
+            / all_args.scenario_name
+            / all_args.algorithm_name
+            / all_args.experiment_name
     )
     if not run_dir.exists():
         os.makedirs(str(run_dir))
@@ -167,4 +174,8 @@ def main(args):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    project_dir = os.path.dirname(os.getcwd())
+    data_dir = project_dir + '/output1.txt'
+    with open(data_dir, 'w') as f:
+        sys.stdout = f
+        main(sys.argv[1:])

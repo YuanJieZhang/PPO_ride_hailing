@@ -10,6 +10,8 @@ from gym import spaces
 import numpy as np
 from envs.env_core import EnvCore
 from envs.new_env import TopEnvironment
+from envs.env_without_fairness import TopEnvironmentW
+
 class DiscreteActionEnv(object):
     """
     对于离散动作环境的封装
@@ -26,7 +28,7 @@ class DiscreteActionEnv(object):
             self.signal_action_dim = 101
             '''
     def __init__(self,agent_num):
-        self.env = TopEnvironment(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+        self.env = TopEnvironmentW(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
         self.num_agent = self.env.agent_num
 
         self.signal_obs_dim = self.env.obs_dim
@@ -95,10 +97,9 @@ class DiscreteActionEnv(object):
         # actions shape = (5, 2, 5)
         # 5 threads of the environment, with 2 intelligent agents inside, and each intelligent agent's action is a 5-dimensional one_hot encoding
         """
-        print(actions)
+
         results = self.env.step(actions)
         obs, rews, dones, infos = results
-        print(obs, rews, dones, infos)
         return np.stack(obs), np.stack(rews), np.stack(dones), infos
 
     def reset(self):

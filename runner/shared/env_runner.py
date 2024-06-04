@@ -18,7 +18,7 @@ def _t2n(x):
 
 
 class EnvRunner(Runner):
-    """Runner class to perform training, evaluation. and data collection for the MPEs. See parent class for details."""
+    """Runner class to perform training, evaluation. and data.txt collection for the MPEs. See parent class for details."""
 
     def __init__(self, config):
         super(EnvRunner, self).__init__(config)
@@ -46,7 +46,6 @@ class EnvRunner(Runner):
 
                 # Obser reward and next obs
                 obs, rewards, dones, infos = self.envs.step(actions_env)
-                print(obs, rewards, dones, infos)
                 data = (
                     obs,
                     rewards,
@@ -59,7 +58,7 @@ class EnvRunner(Runner):
                     rnn_states_critic,
                 )
 
-                # insert data into buffer
+                # insert data.txt into buffer
                 self.insert(data)
 
             # compute return and update network
@@ -76,18 +75,18 @@ class EnvRunner(Runner):
             # log information
             if episode % self.log_interval == 0:
                 end = time.time()
-                print(
-                    "\n Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
-                        self.all_args.scenario_name,
-                        self.algorithm_name,
-                        self.experiment_name,
-                        episode,
-                        episodes,
-                        total_num_steps,
-                        self.num_env_steps,
-                        int(total_num_steps / (end - start)),
-                    )
-                )
+                # print(
+                #     "\n Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
+                #         self.all_args.scenario_name,
+                #         self.algorithm_name,
+                #         self.experiment_name,
+                #         episode,
+                #         episodes,
+                #         total_num_steps,
+                #         self.num_env_steps,
+                #         int(total_num_steps / (end - start)),
+                #     )
+                #)
 
                 # if self.env_name == "MPE":
                 #     env_infos = {}

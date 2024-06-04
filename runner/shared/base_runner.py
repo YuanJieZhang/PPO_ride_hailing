@@ -83,11 +83,11 @@ class Runner(object):
                                         self.envs.action_space[0])
 
     def run(self):
-        """Collect training data, perform training updates, and evaluate policy."""
+        """Collect training data.txt, perform training updates, and evaluate policy."""
         raise NotImplementedError
 
     def warmup(self):
-        """Collect warmup pre-training data."""
+        """Collect warmup pre-training data.txt."""
         raise NotImplementedError
 
     def collect(self, step):
@@ -96,14 +96,14 @@ class Runner(object):
 
     def insert(self, data):
         """
-        Insert data into buffer.
-        :param data: (Tuple) data to insert into training buffer.
+        Insert data.txt into buffer.
+        :param data: (Tuple) data.txt to insert into training buffer.
         """
         raise NotImplementedError
     
     @torch.no_grad()
     def compute(self):
-        """Calculate returns for the collected data."""
+        """Calculate returns for the collected data.txt."""
         self.trainer.prep_rollout()
         next_values = self.trainer.policy.get_values(np.concatenate(self.buffer.share_obs[-1]),
                                                 np.concatenate(self.buffer.rnn_states_critic[-1]),
@@ -112,7 +112,7 @@ class Runner(object):
         self.buffer.compute_returns(next_values, self.trainer.value_normalizer)
     
     def train(self):
-        """Train policies with data in buffer. """
+        """Train policies with data.txt in buffer. """
         self.trainer.prep_training()
         train_infos = self.trainer.train(self.buffer)      
         self.buffer.after_update()

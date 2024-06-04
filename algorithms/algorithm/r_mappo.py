@@ -1,4 +1,9 @@
-
+"""
+# @Time    : 2021/7/1 6:52 下午
+# @Author  : hezhiqiang01
+# @Email   : hezhiqiang01@baidu.com
+# @File    : r_mappo.py
+"""
 
 import numpy as np
 import torch
@@ -58,7 +63,7 @@ class RMAPPO():
         """
         Calculate value function loss.
         :param values: (torch.Tensor) value function predictions.
-        :param value_preds_batch: (torch.Tensor) "old" value  predictions from data batch (used for value clip loss)
+        :param value_preds_batch: (torch.Tensor) "old" value  predictions from data.txt batch (used for value clip loss)
         :param return_batch: (torch.Tensor) reward to go returns.
         :param active_masks_batch: (torch.Tensor) denotes if agent is active or dead at a given timesep.
 
@@ -96,7 +101,7 @@ class RMAPPO():
     def ppo_update(self, sample, update_actor=True):
         """
         Update actor and critic networks.
-        :param sample: (Tuple) contains data batch with which to update networks.
+        :param sample: (Tuple) contains data.txt batch with which to update networks.
         :update_actor: (bool) whether to update actor network.
 
         :return value_loss: (torch.Tensor) value function loss.
@@ -171,7 +176,7 @@ class RMAPPO():
     def train(self, buffer, update_actor=True):
         """
         Perform a training update using minibatch GD.
-        :param buffer: (SharedReplayBuffer) buffer containing training data.
+        :param buffer: (SharedReplayBuffer) buffer containing training data.txt.
         :param update_actor: (bool) whether to update actor network.
 
         :return train_info: (dict) contains information regarding training update (e.g. loss, grad norms, etc).

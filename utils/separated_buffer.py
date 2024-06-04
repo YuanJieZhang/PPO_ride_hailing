@@ -295,7 +295,7 @@ class SeparatedReplayBuffer(object):
         assert episode_length * n_rollout_threads >= data_chunk_length, (
             "PPO requires the number of processes ({}) * episode length ({}) "
             "to be greater than or equal to the number of "
-            "data chunk length ({}).".format(n_rollout_threads, episode_length, data_chunk_length))
+            "data.txt chunk length ({}).".format(n_rollout_threads, episode_length, data_chunk_length))
         assert data_chunks >= 2, ("need larger batch size")
 
         rand = torch.randperm(data_chunks).numpy()

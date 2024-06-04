@@ -29,9 +29,9 @@ def get_config():
         --num_env_steps <int>
             number of env steps to train (default: 10e6)
         --user_name <str>
-            [for wandb usage], to specify user's name for simply collecting training data.
+            [for wandb usage], to specify user's name for simply collecting training data.txt.
         --use_wandb
-            [for wandb usage], by default True, will log date to wandb server. or else will use tensorboard to log data.
+            [for wandb usage], by default True, will log date to wandb server. or else will use tensorboard to log data.txt.
 
     Env parameters:
         --env_name <str>
@@ -86,7 +86,7 @@ def get_config():
             coefficience of weight decay (default: 0)
 
     PPO parameters:
-        --ppo_epoch <int>
+        --F <int>
             number of ppo epochs (default: 15)
         --use_clipped_value_loss
             by default, clip loss value. If set, do not clip loss value.
@@ -111,7 +111,7 @@ def get_config():
         --use_huber_loss
             by default, use huber loss. If set, do not use huber loss.
         --use_value_active_masks
-            by default True, whether to mask useless data in value loss.
+            by default True, whether to mask useless data.txt in value loss.
         --huber_delta <float>
             coefficient of huber loss.
 
@@ -213,7 +213,7 @@ def get_config():
         "--user_name",
         type=str,
         default="marl",
-        help="[for wandb usage], to specify user's name for simply collecting training data.",
+        help="[for wandb usage], to specify user's name for simply collecting training data.txt.",
     )
 
     # env parameters
@@ -244,7 +244,7 @@ def get_config():
     parser.add_argument(
         "--stacked_frames",
         type=int,
-        default=1,
+        default=10,
         help="Dimension of hidden layers for actor/critic networks",
     )
     parser.add_argument(
@@ -256,13 +256,13 @@ def get_config():
     parser.add_argument(
         "--hidden_size",
         type=int,
-        default=64,
+        default=256,
         help="Dimension of hidden layers for actor/critic networks",
     )
     parser.add_argument(
         "--layer_N",
         type=int,
-        default=1,
+        default=24,
         help="Number of layers for actor/critic networks",
     )
     parser.add_argument("--use_ReLU", action="store_false", default=True, help="Whether to use ReLU")
@@ -318,7 +318,7 @@ def get_config():
     parser.add_argument(
         "--critic_lr",
         type=float,
-        default=5e-4,
+        default=1e-4,
         help="critic learning rate (default: 5e-4)",
     )
     parser.add_argument(
@@ -407,13 +407,13 @@ def get_config():
         "--use_value_active_masks",
         action="store_false",
         default=True,
-        help="by default True, whether to mask useless data in value loss.",
+        help="by default True, whether to mask useless data.txt in value loss.",
     )
     parser.add_argument(
         "--use_policy_active_masks",
         action="store_false",
         default=True,
-        help="by default True, whether to mask useless data in policy loss.",
+        help="by default True, whether to mask useless data.txt in policy loss.",
     )
     parser.add_argument("--huber_delta", type=float, default=10.0, help=" coefficience of huber loss.")
 

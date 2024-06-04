@@ -87,7 +87,6 @@ class TopEnvironment1(object):
     def step(self, action):
         # action把他变成司机->request的形式传入step
         action_map = {}
-        print(action)
         select_actions = []
         reward = 0
         if self.drivers[action[1]].on_road == 0:
@@ -129,7 +128,6 @@ class TopEnvironment(object):
             driver.idx = idx
             driver.money = 0
             driver.speed = speed
-        print(self.drivers)
 
         self.observation = observation
         self.events = None
@@ -148,7 +146,6 @@ class TopEnvironment(object):
         self.requests = []
         # 所有的点
         self.actions = tuple(self.graph.nodes)
-        print(self.actions)
         super().__init__()
 
     def close(self):
@@ -178,7 +175,6 @@ class TopEnvironment(object):
     def step(self, action):
         # action把他变成司机->request的形式传入step
         action_map = {}
-        print(action)
         select_actions = []
         reward = 0
         if self.drivers[action[1]].on_road == 0:
@@ -194,7 +190,6 @@ class TopEnvironment(object):
                                                   random_action.origin)["distance"])
                 self.drivers[action[1]].on_road = 1
                 self.drivers[action[1]].Request = random_action
-                print(self.drivers[action[1]])
 
 
         if self.time >= self.final_time:

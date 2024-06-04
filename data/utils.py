@@ -2,6 +2,7 @@ import os
 import random
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 import csv
 import tempfile
@@ -35,6 +36,8 @@ def create_graph():
         # 检查边是否已经存在于图中
         if not graph.has_edge(int(node1.replace("A", "")), int(node2.replace("A", ""))):
             graph.add_edge(int(node1.replace("A", "")), int(node2.replace("A", "")), distance=dis)
+        if not graph.has_edge(int(node2.replace("A", "")), int(node1.replace("A", ""))):
+            graph.add_edge(int(node2.replace("A", "")), int(node1.replace("A", "")), distance=dis)
     import sys
     return graph
 
@@ -46,7 +49,20 @@ def choose_random_node(graph):
 
 
 import pandas as pd
+def import_requests_from_csv():
+    project_dir = os.path.dirname(os.getcwd())
+    file_path = project_dir + "/data/bay_vio_data_03_19.csv"
+    requests = [[]]
+    data = pd.read_csv(file_path)
+    for row in data.itertuples(index=False):
+        timestamp = int(row.RequestTime)
+        destination = change_node_to_int(row.aim_marker)
+        origin = change_node_to_int(row.street_marker)
+        request = Request(timestamp, destination, origin)
+        if request.destination != origin:
+            requests[0].append(request)
 
+    return requests
 
 # 定义请求结构
 class Request:
@@ -68,32 +84,15 @@ class Driver:
         self.pos = None
 
     def __str__(self):
-        return f"Driver(speed={self.speed}, idx={self.idx}, money={self.money},on_road={self.on_road}, start_time={self.start_time},Request={self.Request})"
+        if self.Request is not None:
+            return f"Driver(speed={self.speed}, idx={self.idx}, money={self.money},on_road={self.on_road}, start_time={self.start_time},Request={self.Request.origin,self.Request.destination,self.Request.state,self.Request.timestamp},pos={self.pos})"
+
+        return f"Driver(speed={self.speed}, idx={self.idx}, money={self.money},on_road={self.on_road}, start_time={self.start_time},pos={self.pos})"
 
     # 从CSV文件中导入请求
 
 
-def import_requests_from_csv():
-    project_dir = os.path.dirname(os.getcwd())
-    data_dir = project_dir + '/data'
-    file_path = data_dir + "/bay_vio_data_03_19.csv"
-    requests = [[]]
-    data = pd.read_csv(file_path)
-    for row in data.itertuples(index=False):
-        timestamp = row.RequestTime
-        destination = change_node_to_int(row.aim_marker)
-        origin = change_node_to_int(row.street_marker)
-        if timestamp >= len(requests):
-            requests.append([])
-        request = Request(timestamp, destination, origin)
-        if request != origin:
-            requests[timestamp].append(request)
 
-    for i in range(100):
-        for j in range(10):
-            request = Request(1, i, j)
-            requests[0].append(request)
-    return requests
 
 
 def change_node_to_int(node):
@@ -103,38 +102,20 @@ def change_node_to_int(node):
         return 0
 
 
-def change_csv():
+
+
+
+def load_budget():
     project_dir = os.path.dirname(os.getcwd())
-    data_dir = project_dir + '/rl_mtop/data' + '/bay_vio_data_03_19.csv'
+    file_path = project_dir+'/data/fairness.npy'
+    array = np.load(file_path)
+    return array
 
-    # 读取原始CSV文件的数据并筛选
-    with open(data_dir, 'r', newline='') as input_file:
-        reader = csv.reader(input_file)
-        # 创建一个临时文件来保存筛选后的数据
-        temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False)
+def load_location():
+    project_dir = os.path.dirname(os.getcwd())
+    file_path = project_dir +'/data/init_location.npy'
+    array = np.load(file_path)
+    return array
 
-        writer = csv.writer(temp_file)
-        # 读取并写入第一行
-        header = next(reader)
-        writer.writerow(header)  # 跳过第一行
-        next(reader)
-        for row in reader:
-            nodes = row[1].split('_')
-            node1 = nodes[0]
-            node2 = nodes[1]
-            try:
-                int(node1.replace("A", ""))
-                int(node2.replace("A", ""))
-            except ValueError:
-                continue
-
-            if int(node1.replace("A", "")) > 100 | int(node2.replace("A", "")) > 100:
-                continue
-
-            writer.writerow(row)
-
-    # 关闭临时文件
-    temp_file.close()
-
-    # 覆盖原始文件
-    shutil.move(temp_file.name, data_dir)
+load_budget()
+load_location()
