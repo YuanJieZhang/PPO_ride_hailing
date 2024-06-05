@@ -58,6 +58,9 @@ class TopEnvironmentW:
         self.utility = [[]]
         self.epoch = 0
         self.beta = load_budget()
+        project_dir = os.path.dirname(os.getcwd())
+        data_dir = project_dir + '/output1.txt'
+        self.file = open(data_dir, 'w')
 
     def _generate_observation(self):
         state = np.zeros((self.agent_num, self.obs_dim))
@@ -94,10 +97,13 @@ class TopEnvironmentW:
             for r in self.requests:
                 r.state = 0
             self.epoch += 1
-            print("epoch:", self.epoch)
-            print("utility:", np.sum(self.utility))
-            print("fairness:", self._filter_beta())
+            msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, np.sum(self.utility), self._filter_beta())
+            print(msg)
+            self.file.write(msg)
             self.reset()
+        if self.epoch > 1000:
+            self.file.close()
+            sys.exit(0)
         for driver in self.drivers:
             if driver.on_road == 1:
                 driver.start_time += self.timestep
@@ -128,6 +134,8 @@ class TopEnvironmentW:
         vec = np.array(reward_list).reshape((1, self.agent_num))
         self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, np.sum(self.utility), self._filter_beta(),self._beta())
+        print(msg)
         return self._state(), reward_list, end_list, {}
 
     def single_step(self, action):
