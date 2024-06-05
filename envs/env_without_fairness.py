@@ -90,6 +90,10 @@ class TopEnvironmentW:
         self.fairness = []
         self.order_count = 0
         self.step_count = 0
+        self.epoch += 1
+        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, np.sum(self.utility), self._filter_beta())
+        print(msg)
+        self.file.write(msg)
         return self._generate_observation()
 
     def step(self, action):

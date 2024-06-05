@@ -174,8 +174,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    project_dir = os.path.dirname(os.getcwd())
-    data_dir = project_dir + '/output1.txt'
-    with open(data_dir, 'w') as f:
-        sys.stdout = f
+
         main(sys.argv[1:])
