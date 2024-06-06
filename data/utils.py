@@ -117,5 +117,12 @@ def load_location():
     array = np.load(file_path)
     return array
 
+def load_minuium_budget():
+    project_dir = os.path.dirname(os.getcwd())
+    file_path = project_dir +'/data/fairness_values_reassign.npy'
+    array = np.load(file_path)
+    return array
+
 load_budget()
+load_location()
 load_location()

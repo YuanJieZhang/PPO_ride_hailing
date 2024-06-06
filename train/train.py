@@ -26,12 +26,12 @@ from envs.env_wrappers import DummyVecEnv
 """Train script for MPEs."""
 
 
-def make_train_env(all_args):
+def make_train_env(all_args,select):
     def get_env_fn(rank):
         def init_env():
             from envs.env_discrete import DiscreteActionEnv
 
-            env = DiscreteActionEnv(all_args.num_agents)
+            env = DiscreteActionEnv(all_args.num_agents,select)
 
             env.seed(all_args.seed + rank * 1000)
             return env
@@ -69,7 +69,7 @@ def parse_args(args, parser):
     return all_args
 
 
-def main(args):
+def main(args,select):
     parser = get_config()
     all_args = parse_args(args, parser)
 
@@ -142,7 +142,7 @@ def main(args):
     np.random.seed(all_args.seed)
 
     # env init
-    envs = make_train_env(all_args)
+    envs = make_train_env(all_args,select)
     eval_envs = make_eval_env(all_args) if all_args.use_eval else None
     num_agents = all_args.num_agents
 
@@ -175,4 +175,4 @@ def main(args):
 
 if __name__ == "__main__":
 
-        main(sys.argv[1:])
+        main(sys.argv[1:],0)

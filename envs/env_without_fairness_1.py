@@ -22,9 +22,10 @@ from data.utils import Driver
 from data.utils import choose_random_node
 from data.utils import load_budget
 from data.utils import load_location
+from data.utils import load_minuium_budget
 
 
-class TopEnvironmentW:
+class TopEnvironmentW_1:
     FREE = 0
     OCCUPIED = 1
 
@@ -57,7 +58,7 @@ class TopEnvironmentW:
         self.fairness = []
         self.utility = [[]]
         self.epoch = 0
-        self.beta = load_budget()
+        self.beta = load_minuium_budget()
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output1.txt'
         self.file = open(data_dir, 'w')
@@ -135,12 +136,11 @@ class TopEnvironmentW:
             end_list.append(done)
         self.time += self.timestep
 
-        vec = np.array(reward_list).reshape((1, self.agent_num))
-        self.utility = np.hstack((self.utility, vec.T))
+        after_reward_list = [x + (min(reward_list) / self.agent_num) for x in reward_list]
         self.step_count += 1
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
         print(msg)
-        return self._state(), reward_list, end_list, {}
+        return self._state(), after_reward_list, end_list, {}
 
     def single_step(self, action):
         # action把他变成司机->request的形式传入step
@@ -181,7 +181,13 @@ class TopEnvironmentW:
         reward_list = []
         for driver in self.drivers:
             reward_list.append(driver.money)
-        return statistics.stdev(reward_list)
+        return min(reward_list)
+
+    def _filter_sum(self):
+        reward_list = []
+        for driver in self.drivers:
+            reward_list.append(driver.money)
+        return sum(reward_list)
 
     def driver_E_fairness(self, action, driver_idx):
         select_actions = []
@@ -211,11 +217,6 @@ class TopEnvironmentW:
             return max(self.beta)
         return self.beta[self.step_count]
 
-    def _filter_sum(self):
-        reward_list = []
-        for driver in self.drivers:
-            reward_list.append(driver.money)
-        return sum(reward_list)
     # def test(self):
     #     ("Testing environment with {} agents".format(self.agent_num))
     #     obs = self.reset()

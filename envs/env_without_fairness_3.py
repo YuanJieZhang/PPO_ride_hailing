@@ -24,7 +24,7 @@ from data.utils import load_budget
 from data.utils import load_location
 
 
-class TopEnvironmentW:
+class TopEnvironmentW_3:
     FREE = 0
     OCCUPIED = 1
 
@@ -57,7 +57,6 @@ class TopEnvironmentW:
         self.fairness = []
         self.utility = [[]]
         self.epoch = 0
-        self.beta = load_budget()
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output1.txt'
         self.file = open(data_dir, 'w')
@@ -91,7 +90,7 @@ class TopEnvironmentW:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
-        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
+        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch,self._filter_sum(), self._filter_beta())
         print(msg)
         self.file.write(msg)
         return self._generate_observation()
@@ -135,12 +134,11 @@ class TopEnvironmentW:
             end_list.append(done)
         self.time += self.timestep
 
-        vec = np.array(reward_list).reshape((1, self.agent_num))
-        self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
-        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
+        after_reward_list = [x + (min(reward_list) / self.agent_num) for x in reward_list]
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta())
         print(msg)
-        return self._state(), reward_list, end_list, {}
+        return self._state(), after_reward_list, end_list, {}
 
     def single_step(self, action):
         # action把他变成司机->request的形式传入step
@@ -148,8 +146,7 @@ class TopEnvironmentW:
         reward = 0
         action_onehot = action[0]
         select_action_to = action_onehot.tolist().index(1) + 9999
-        if select_action_to >= 20000 or self.driver_E_fairness(
-                select_action_to, action[1]) > self._beta():
+        if select_action_to >= 20000 :
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
 
@@ -181,41 +178,17 @@ class TopEnvironmentW:
         reward_list = []
         for driver in self.drivers:
             reward_list.append(driver.money)
-        return statistics.stdev(reward_list)
-
-    def driver_E_fairness(self, action, driver_idx):
-        select_actions = []
-        sum_reward = 0
-        if self.drivers[driver_idx].on_road == 0:
-            for r in self.requests:
-                if r.destination == action:
-                    if (r.state == 0) & r.origin != r.destination:
-                        select_actions.append(r)
-            if len(select_actions) != 0:
-                for aim_action in select_actions:
-                    # random_action = random.choice(select_actions)
-                    aim_action.state = 1
-                    reward = (self.graph.get_edge_data(aim_action.origin, aim_action.destination)["distance"] -
-                              self.graph.get_edge_data(self.drivers[driver_idx].pos,
-                                                       aim_action.origin)["distance"])
-                    sum_reward += reward
-                return sum_reward / len(select_actions)
-            else:
-                return 0
-        return 0
-
-    def _beta(self):
-        if self.epoch < 100:
-            return 100000000
-        if self.step_count >= len(self.beta)-1:
-            return max(self.beta)
-        return self.beta[self.step_count]
+        return min(reward_list)
 
     def _filter_sum(self):
         reward_list = []
         for driver in self.drivers:
             reward_list.append(driver.money)
         return sum(reward_list)
+
+
+
+
     # def test(self):
     #     ("Testing environment with {} agents".format(self.agent_num))
     #     obs = self.reset()
