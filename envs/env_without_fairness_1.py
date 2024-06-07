@@ -149,7 +149,7 @@ class TopEnvironmentW_1:
         action_onehot = action[0]
         select_action_to = action_onehot.tolist().index(1) + 9999
         if select_action_to >= 20000 or self.driver_E_fairness(
-                select_action_to, action[1]) > self._beta():
+                select_action_to, action[1]) < self._beta():
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
 
@@ -212,7 +212,7 @@ class TopEnvironmentW_1:
 
     def _beta(self):
         if self.epoch < 100:
-            return 100000000
+            return -1
         if self.step_count >= len(self.beta)-1:
             return max(self.beta)
         return self.beta[self.step_count]

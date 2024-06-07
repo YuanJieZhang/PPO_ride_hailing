@@ -15,7 +15,7 @@ from pathlib import Path
 import torch
 
 # Get the parent directory of the current file
-parent_dir = os.path.abspath(os.path.join(os.getcwd(), "."))
+parent_dir = os.path.abspath(os.path.join(os.getcwd(), "../"))
 
 # Append the parent directory to sys.path, otherwise the following import will fail
 sys.path.append(parent_dir)
