@@ -17,7 +17,6 @@ from envs.env_without_fairness_3 import TopEnvironmentW_3
 from envs.env_without_fairness_8 import TopEnvironmentW_8
 
 
-
 class DiscreteActionEnv(object):
     """
     对于离散动作环境的封装
@@ -33,20 +32,21 @@ class DiscreteActionEnv(object):
             self.signal_obs_dim = 4
             self.signal_action_dim = 101
             '''
-    def __init__(self,agent_num,select):
+
+    def __init__(self, agent_num, select):
         if select == 0:
-            self.env = TopEnvironmentW(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+            self.env = TopEnvironmentW(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
         elif select == 1:
-            self.env = TopEnvironmentW_1(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+            self.env = TopEnvironmentW_1(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
 
         elif select == 2:
-            self.env = TopEnvironmentW_2(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+            self.env = TopEnvironmentW_2(gamma=0.85, drivers_num=agent_num)
 
         elif select == 3:
-            self.env = TopEnvironmentW_3(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+            self.env = TopEnvironmentW_3(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
 
         elif select == 8:
-            self.env = TopEnvironmentW_8(gamma=np.power(0.5, 1. / 3600),drivers_num=agent_num)
+            self.env = TopEnvironmentW_8(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
 
         self.num_agent = self.env.agent_num
 
@@ -105,7 +105,6 @@ class DiscreteActionEnv(object):
             spaces.Box(low=-np.inf, high=+np.inf, shape=(share_obs_dim,), dtype=np.float32)
             for _ in range(self.num_agent)
         ]
-
 
     def step(self, actions):
         """
@@ -167,9 +166,9 @@ class MultiDiscrete:
 
     def contains(self, x):
         return (
-            len(x) == self.num_discrete_space
-            and (np.array(x) >= self.low).all()
-            and (np.array(x) <= self.high).all()
+                len(x) == self.num_discrete_space
+                and (np.array(x) >= self.low).all()
+                and (np.array(x) <= self.high).all()
         )
 
     @property
