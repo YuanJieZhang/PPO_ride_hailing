@@ -133,7 +133,7 @@ class TopEnvironmentW_2:
         self.utility = np.hstack((self.utility, vec.T))
         self.step_count += 1
         std_dev = statistics.stdev(reward_list)
-        after_reward_list = [x - (std_dev) for x in reward_list]
+        after_reward_list = [x - (std_dev)/10 for x in reward_list]
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum()*self.gamma, self._filter_beta()/self.gamma)
         print(msg)
         self.file.write(msg)
