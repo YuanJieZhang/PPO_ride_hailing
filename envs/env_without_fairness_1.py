@@ -170,7 +170,7 @@ class TopEnvironmentW_1:
                     self.drivers[action[1]].Request = aim_action
                     break
 
-        if self.order_count >= self.max_count:
+        if self.order_count >= self.max_count or self.step_count > 300:
             self.done = True
         return self._state(), reward, self.done, {}
 

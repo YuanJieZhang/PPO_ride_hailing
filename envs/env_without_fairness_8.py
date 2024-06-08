@@ -90,7 +90,7 @@ class TopEnvironmentW_8:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
-        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, np.sum(self.utility), self._filter_beta())
+        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch,self._filter_sum(), self._filter_beta())
         print(msg)
         self.file.write(msg)
         return self._generate_observation()
@@ -100,7 +100,7 @@ class TopEnvironmentW_8:
             for r in self.requests:
                 r.state = 0
             self.epoch += 1
-            msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, np.sum(self.utility), self._filter_beta())
+            msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
             print(msg)
             self.file.write(msg)
             self.reset()
@@ -135,7 +135,7 @@ class TopEnvironmentW_8:
         self.time += self.timestep
         self.step_count += 1
 
-        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, np.sum(self.utility), self._filter_beta())
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta())
         print(msg)
         return self._state(), reward_list, end_list, {}
 

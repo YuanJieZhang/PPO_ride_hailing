@@ -123,6 +123,6 @@ def load_minuium_budget():
     array = np.load(file_path)
     return array
 
-load_budget()
+print(load_budget())
 load_location()
 load_location()

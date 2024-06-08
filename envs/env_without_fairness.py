@@ -59,7 +59,7 @@ class TopEnvironmentW:
         self.epoch = 0
         self.beta = load_budget()
         project_dir = os.path.dirname(os.getcwd())
-        data_dir = project_dir + '/output1.txt'
+        data_dir = project_dir + '/output0.txt'
         self.file = open(data_dir, 'w')
 
     def _generate_observation(self):
