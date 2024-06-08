@@ -90,9 +90,6 @@ class TopEnvironmentW_2:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
-        msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
-        print(msg)
-        self.file.write(msg)
         return self._generate_observation()
 
     def step(self, action):
@@ -100,9 +97,6 @@ class TopEnvironmentW_2:
             for r in self.requests:
                 r.state = 0
             self.epoch += 1
-            msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
-            print(msg)
-            self.file.write(msg)
             self.reset()
         if self.epoch > 1000:
             self.file.close()
@@ -139,8 +133,9 @@ class TopEnvironmentW_2:
         self.step_count += 1
         std_dev = statistics.stdev(reward_list)
         after_reward_list = [x - (std_dev) for x in reward_list]
-        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta())
+        msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum()*0.85, self._filter_beta())
         print(msg)
+        self.file.write(msg)
         return self._state(), after_reward_list, end_list, {}
 
     def single_step(self, action):

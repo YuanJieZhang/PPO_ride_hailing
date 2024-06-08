@@ -140,6 +140,7 @@ class TopEnvironmentW_1:
         self.step_count += 1
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
         print(msg)
+        self.file.write(msg)
         return self._state(), after_reward_list, end_list, {}
 
     def single_step(self, action):
