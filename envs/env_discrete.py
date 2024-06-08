@@ -40,7 +40,7 @@ class DiscreteActionEnv(object):
             self.env = TopEnvironmentW_1(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
 
         elif select == 2:
-            self.env = TopEnvironmentW_2(gamma=0.85, drivers_num=agent_num)
+            self.env = TopEnvironmentW_2(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
 
         elif select == 3:
             self.env = TopEnvironmentW_3(gamma=np.power(0.5, 1. / 3600), drivers_num=agent_num)
