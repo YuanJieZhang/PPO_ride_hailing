@@ -13,6 +13,8 @@ from datetime import datetime
 import pickle
 import copy
 from heapq import heappush, heappop, nsmallest
+
+import wandb
 from tqdm import tqdm
 
 from matplotlib import animation
@@ -42,6 +44,8 @@ class TopEnvironmentW_8:
             driver.idx = idx
             driver.money = 0
             driver.speed = 5000
+            driver.start_time=0
+
         self.start_time = start_time
         self.timestep = timestep
         self.final_time = final_time
@@ -60,6 +64,8 @@ class TopEnvironmentW_8:
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output8.txt'
         self.file = open(data_dir, 'w')
+        self.wandb = wandb.init(project='ppo_experiment_8')
+
 
     def _generate_observation(self):
         state = np.zeros((self.agent_num, self.obs_dim))
@@ -78,6 +84,8 @@ class TopEnvironmentW_8:
             driver.on_road = self.FREE
             driver.money = 0
             driver.pos = self.init_pos[i]
+            driver.start_time=0
+
             i += 1  # 随机选择一个位置
 
         self.time = 0
@@ -106,20 +114,19 @@ class TopEnvironmentW_8:
             self.reset()
         if self.epoch > 1000:
             self.file.close()
+            wandb.finish()
             sys.exit(0)
         for driver in self.drivers:
             if driver.on_road == 1:
-                driver.start_time += self.timestep
-                if (self.graph.get_edge_data(driver.Request.origin, driver.Request.destination)["distance"] -
+                if (self.graph.get_edge_data(driver.Request.origin, driver.Request.destination)["distance"] +
                     self.graph.get_edge_data(driver.pos,
                                              driver.Request.origin)[
-                        "distance"]) / driver.speed <= driver.start_time:
+                        "distance"]) / driver.speed <= self.time-driver.start_time:
                     driver.on_road = 0
                     self.order_count += 1
                     driver.Request.state = 1
                     driver.pos = driver.Request.destination
-                    driver.money += self.graph.get_edge_data(driver.Request.origin,
-                                                             driver.Request.destination)["distance"]
+                    driver.start_time=self.time
         sorted_drivers = sorted(self.drivers, key=lambda d: d.money)
         # sort 目的地
         reward_list = []
@@ -137,6 +144,7 @@ class TopEnvironmentW_8:
 
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta())
         print(msg)
+        wandb.log({'epoch': self.epoch,'step':self.step_count ,'utility': self._filter_sum(), 'fairness': self._filter_beta()})
         self.file.write(msg)
         return self._state(), reward_list, end_list, {}
 
