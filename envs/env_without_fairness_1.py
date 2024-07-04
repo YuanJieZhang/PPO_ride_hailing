@@ -61,6 +61,7 @@ class TopEnvironmentW_1:
         self.fairness = []
         self.utility = [[]]
         self.epoch = 0
+        self.factor = 1
         self.beta = load_minuium_budget()
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output11.txt'
@@ -99,6 +100,7 @@ class TopEnvironmentW_1:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
+        self.factor = 1
         msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
         print(msg)
         self.file.write(msg)
@@ -143,6 +145,8 @@ class TopEnvironmentW_1:
 
         after_reward_list = [x + (min(reward_list) / self.agent_num) for x in reward_list]
         self.step_count += 1
+        if self.step_count > 300:
+            self.factor *= 0.9
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
         wandb.log({'epoch': self.epoch, 'step':self.step_count,'utility': self._filter_sum(), 'fairness': self._filter_beta()})
         print(msg)
@@ -198,7 +202,7 @@ class TopEnvironmentW_1:
 
     def driver_E_fairness(self, action, driver_idx):
         select_actions = []
-        sum_reward = 0
+        request_money =[]
         if self.drivers[driver_idx].on_road == 0:
             for r in self.requests:
                 if r.destination == action:
@@ -211,8 +215,8 @@ class TopEnvironmentW_1:
                     reward = (self.graph.get_edge_data(aim_action.origin, aim_action.destination)["distance"] -
                               self.graph.get_edge_data(self.drivers[driver_idx].pos,
                                                        aim_action.origin)["distance"])
-                    sum_reward += reward
-                return sum_reward / len(select_actions)
+                    request_money.append(reward+self.drivers[driver_idx].money)
+                return min(request_money)
             else:
                 return 0
         return 0
