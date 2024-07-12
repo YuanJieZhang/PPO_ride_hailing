@@ -162,7 +162,7 @@ class TopEnvironmentW:
             return self._state(), reward, self.done, {}
         if self.driver_E_fairness(
                 select_action_to, action[1]) > self._beta()*self.factor:
-            if self.step_count > 300:
+            if self.step_count > 100:
                 self.factor *= 1.05
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
