@@ -61,6 +61,8 @@ class TopEnvironmentW:
         self.utility = [[]]
         self.epoch = 0
         self.beta = load_budget()
+        self.factor = 1
+
         project_dir = os.path.dirname(os.getcwd())
         data_dir = project_dir + '/output0.txt'
         self.file = open(data_dir, 'w')
@@ -97,6 +99,7 @@ class TopEnvironmentW:
         self.order_count = 0
         self.step_count = 0
         self.epoch += 1
+        self.factor=1
         msg = 'epoch:{0}, utility:{1}, fairness:{2}'.format(self.epoch, self._filter_sum(), self._filter_beta())
         print(msg)
         self.file.write(msg)
@@ -155,8 +158,12 @@ class TopEnvironmentW:
         reward = 0
         action_onehot = action[0]
         select_action_to = action_onehot.tolist().index(1) + 9999
-        if select_action_to >= 20000 or self.driver_E_fairness(
-                select_action_to, action[1]) > self._beta():
+        if select_action_to >= 20000 :
+            return self._state(), reward, self.done, {}
+        if self.driver_E_fairness(
+                select_action_to, action[1]) > self._beta()*self.factor:
+            if self.step_count > 300:
+                self.factor *= 1.05
             return self._state(), reward, self.done, {}
         node_idx = select_action_to
 

@@ -145,8 +145,7 @@ class TopEnvironmentW_1:
 
         after_reward_list = [x + (min(reward_list) / self.agent_num) for x in reward_list]
         self.step_count += 1
-        if self.step_count > 300:
-            self.factor *= 0.9
+
         msg = 'epoch:{0},step:{1}, utility:{2}, fairness:{3},beta:{4}'.format(self.epoch,self.step_count, self._filter_sum(), self._filter_beta(),self._beta())
         wandb.log({'epoch': self.epoch, 'step':self.step_count,'utility': self._filter_sum(), 'fairness': self._filter_beta()})
         print(msg)
@@ -159,9 +158,14 @@ class TopEnvironmentW_1:
         reward = 0
         action_onehot = action[0]
         select_action_to = action_onehot.tolist().index(1) + 9999
-        if select_action_to >= 20000 or self.driver_E_fairness(
-                select_action_to, action[1]) < self._beta():
+        if select_action_to >= 20000 :
             return self._state(), reward, self.done, {}
+        if self.driver_E_fairness(
+            select_action_to, action[1]) < self._beta() * self.beta:
+            if self.step_count > 100:
+                self.factor *= 0.9
+            return self._state(), reward, self.done, {}
+
         node_idx = select_action_to
 
         if self.drivers[action[1]].on_road == 0:

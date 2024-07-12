@@ -318,7 +318,7 @@ def get_config():
     parser.add_argument(
         "--critic_lr",
         type=float,
-        default=1e-4,
+        default=5e-4,
         help="critic learning rate (default: 5e-4)",
     )
     parser.add_argument(
