@@ -161,7 +161,7 @@ class TopEnvironmentW_1:
         if select_action_to >= 20000 :
             return self._state(), reward, self.done, {}
         if self.driver_E_fairness(
-            select_action_to, action[1]) < self._beta() * self.beta:
+            select_action_to, action[1]) < self._beta() * self.factor:
             if self.step_count > 100:
                 self.factor *= 0.9
             return self._state(), reward, self.done, {}
