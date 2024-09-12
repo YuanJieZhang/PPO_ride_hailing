@@ -182,6 +182,7 @@ class TopEnvironmentW:
                     self.drivers[action[1]].money += reward
                     self.drivers[action[1]].on_road = 1
                     self.drivers[action[1]].Request = aim_action
+                    self.factor=1
                     break
 
         if self.order_count >= self.max_count:
